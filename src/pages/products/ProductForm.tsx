@@ -66,7 +66,7 @@ const ProductForm: React.FC = () => {
       });
 
       if (response.ok) {
-        alert("✅ Producto agregado correctamente");
+        alert(" Producto agregado correctamente");
 
         // Limpiar campos después del registro exitoso
         setNombre("");
@@ -76,10 +76,10 @@ const ProductForm: React.FC = () => {
         setImagen(null);
         setPreview(null);
       } else {
-        console.error("❌ Error al agregar producto:", await response.json());
+        console.error(" Error al agregar producto:", await response.json());
       }
     } catch (error) {
-      console.error("❌ Error en la solicitud:", error);
+      console.error(" Error en la solicitud:", error);
     }
   };
 
