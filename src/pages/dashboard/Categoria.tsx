@@ -4,10 +4,27 @@ import { useParams } from "react-router-dom";
 import SimpleProductCard from "../products/SimpleProductCard";
 import Toolbar, { ToolbarOption } from "../../components/Toolbar";
 import CartModal from "../../components/cart/CartModal";
+import ExpandedProductCardPublic from "../../components/ExpandedProductCardPublic";
+import { Product } from "../../types/Product";
 
-interface Product {
-  id: number;
+// interface Product {
+//   id: number;
+//   nombre: string;
+//   descripcion?: string;
+//   precio: number;
+//   cantidad?: number;
+//   imagenUrl: string;
+//   categoria_id?: number;
+//   categoria?: {
+//     id: number;
+//     nombre: string;
+//   };
+// }
+
+interface CartItem {
+  productoId: number;
   nombre: string;
+  cantidad: number;
   precio: number;
   imagenUrl: string;
 }
@@ -18,15 +35,25 @@ const Categoria: React.FC = () => {
 
   // 🛒 Estado del carrito
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    {
-      productoId: 1,
-      nombre: "Producto de prueba",
-      cantidad: 1,
-      precio: 5000,
-      imagenUrl: "producto.jpg",
-    },
-  ]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  const handleAddToCart = (product: Product) => {
+    setCartItems((prev) => {
+      const exists = prev.find((item) => item.productoId === product.id);
+      if (exists) return prev;
+
+      return [
+        ...prev,
+        {
+          productoId: product.id,
+          nombre: product.nombre,
+          cantidad: 1,
+          precio: product.precio,
+          imagenUrl: product.imagenUrl,
+        },
+      ];
+    });
+  };
 
   const handleRemoveFromCart = (productoId: number) => {
     setCartItems((prev) => prev.filter((item) => item.productoId !== productoId));
@@ -45,6 +72,8 @@ const Categoria: React.FC = () => {
     },
   ];
 
+  const [productoExpandido, setProductoExpandido] = useState<Product | null>(null);
+
   // 📦 Traer productos por categoría
   useEffect(() => {
     const fetchProductos = async () => {
@@ -60,17 +89,29 @@ const Categoria: React.FC = () => {
     <div>
       <Toolbar options={opcionesToolbar} />
 
-      <h2 className="text-2xl font-bold capitalize">Productos de {categoria}</h2>
+      <h2 className="text-2xl font-bold capitalize mb-4">Productos de {categoria}</h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-        {productos.map((product) => (
-          <SimpleProductCard
-            key={product.id}
-            product={product}
-            onClick={() => console.log("clic", product)}
+      {productoExpandido ? (
+        <div className="mb-6">
+          <ExpandedProductCardPublic
+            product={productoExpandido}
+            inCart={!!cartItems.find((item) => item.productoId === productoExpandido.id)}
+            onAddToCart={handleAddToCart}
+            onRemoveFromCart={handleRemoveFromCart}
+            onClose={() => setProductoExpandido(null)}
           />
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          {productos.map((product) => (
+            <SimpleProductCard
+              key={product.id}
+              product={product}
+              onClick={() => setProductoExpandido(product)}
+            />
+          ))}
+        </div>
+      )}
 
       <CartModal
         isOpen={isCartOpen}
@@ -84,4 +125,5 @@ const Categoria: React.FC = () => {
 };
 
 export default Categoria;
+
 
