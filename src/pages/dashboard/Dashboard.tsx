@@ -38,7 +38,6 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <Toolbar options={opcionesToolbar} />
-      <h1 className="text-3xl font-bold">Categorías disponibles</h1>
       
       {/* Ahora CategoryList se encarga solo */}
       <CategoryList />
