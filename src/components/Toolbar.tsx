@@ -3,6 +3,7 @@ import React from 'react';
 export interface ToolbarOption {
   label: string;
   onClick: () => void;
+  icon?: string;
 }
 
 interface ToolbarProps {

@@ -5,6 +5,7 @@ import Users from "./pages/users/Users";
 import Navbar from "./components/Navbar";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/register";
+import Categoria from "./pages/dashboard/Categoria";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Navbar /> {/* Menú de navegación global */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard/categoria/:categoria" element={<Categoria />} />
         <Route path="/products" element={<Products />} />
         <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Login />} />
