@@ -6,20 +6,7 @@ import Toolbar, { ToolbarOption } from "../../components/Toolbar";
 import CartModal from "../../components/cart/CartModal";
 import ExpandedProductCardPublic from "../../components/ExpandedProductCardPublic";
 import { Product } from "../../types/Product";
-
-// interface Product {
-//   id: number;
-//   nombre: string;
-//   descripcion?: string;
-//   precio: number;
-//   cantidad?: number;
-//   imagenUrl: string;
-//   categoria_id?: number;
-//   categoria?: {
-//     id: number;
-//     nombre: string;
-//   };
-// }
+import { parseProduct } from "../../utils/parseProduct";
 
 interface CartItem {
   productoId: number;
@@ -74,12 +61,15 @@ const Categoria: React.FC = () => {
 
   const [productoExpandido, setProductoExpandido] = useState<Product | null>(null);
 
-  // 📦 Traer productos por categoría
+  // Traer productos por categoría
   useEffect(() => {
     const fetchProductos = async () => {
       const res = await fetch(`http://localhost:3000/productos/categoria/${categoria}`);
       const data = await res.json();
       setProductos(data);
+
+      const productosParseados: Product[] = data.map(parseProduct);
+      setProductos(productosParseados);
     };
 
     fetchProductos();

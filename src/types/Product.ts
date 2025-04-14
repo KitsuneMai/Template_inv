@@ -3,12 +3,12 @@
 export interface Product {
     id: number;
     nombre: string;
-    descripcion?: string;
+    descripcion: string;
     precio: number;
     cantidad: number;
     imagenUrl: string;
     categoria_id: number;
-    categoria?: {
+    categoria: {
       id: number;
       nombre: string;
     };
