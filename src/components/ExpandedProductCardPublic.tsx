@@ -50,10 +50,14 @@ const ExpandedProductCardPublic: React.FC<Props> = ({
 
       <div className="flex-1 flex flex-col justify-center">
         <h3 className="text-2xl font-semibold mb-2">{product.nombre}</h3>
-        <p className="text-gray-600">{product.descripcion}</p>
+        <p className="text-gray-600">
+          {product.descripcion?.trim() !== "" ? product.descripcion : "Sin descripción disponible."}
+        </p>
+
         <div className="mt-4 space-y-2">
-          <p className="text-lg font-medium text-gray-800">💲 Precio: ${product.precio}</p>
-          <p className="text-lg text-gray-700">📦 Stock: {product.cantidad} unidades</p>
+          <p className="text-lg font-medium text-gray-800">
+            💲 Precio: ${product.precio}
+          </p>
         </div>
 
         <div className="mt-4 flex gap-4">
@@ -90,3 +94,4 @@ const ExpandedProductCardPublic: React.FC<Props> = ({
 };
 
 export default ExpandedProductCardPublic;
+

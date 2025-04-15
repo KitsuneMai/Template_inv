@@ -36,21 +36,22 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div>
-      <Toolbar options={opcionesToolbar} />
-      
-      {/* Ahora CategoryList se encarga solo */}
-      <CategoryList />
-
-      <CartModal
-        isOpen={isCartOpen}
-        items={cartItems}
-        onRemoveItem={handleRemoveFromCart}
-        onCheckout={handleCheckout}
-        onClose={() => setIsCartOpen(false)}
-      />
-    </div>
-  );
+      <>
+        <Toolbar options={opcionesToolbar} />
+    
+        <div className="container mx-auto px-4">
+          <CategoryList />
+        </div>
+    
+        <CartModal
+          isOpen={isCartOpen}
+          items={cartItems}
+          onRemoveItem={handleRemoveFromCart}
+          onCheckout={handleCheckout}
+          onClose={() => setIsCartOpen(false)}
+        />
+      </>
+    );
 };
 
 export default Dashboard;

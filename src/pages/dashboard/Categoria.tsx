@@ -1,6 +1,6 @@
 // pages/dashboard/Categoria.tsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import SimpleProductCard from "../products/SimpleProductCard";
 import Toolbar, { ToolbarOption } from "../../components/Toolbar";
 import CartModal from "../../components/cart/CartModal";
@@ -16,9 +16,12 @@ interface CartItem {
   imagenUrl: string;
 }
 
+
+
 const Categoria: React.FC = () => {
   const { categoria } = useParams();
   const [productos, setProductos] = useState<Product[]>([]);
+  const navigate = useNavigate();
 
   // 🛒 Estado del carrito
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -57,60 +60,74 @@ const Categoria: React.FC = () => {
       label: "Ver carrito",
       onClick: () => setIsCartOpen(true),
     },
+    {
+      label: "Regresar al dashboard",
+      onClick: () => navigate("/"),
+    },
   ];
 
   const [productoExpandido, setProductoExpandido] = useState<Product | null>(null);
+  const [categoriaNombre, setCategoriaNombre] = useState("");
 
   // Traer productos por categoría
   useEffect(() => {
-    const fetchProductos = async () => {
-      const res = await fetch(`http://localhost:3000/productos/categoria/${categoria}`);
-      const data = await res.json();
-      setProductos(data);
-
-      const productosParseados: Product[] = data.map(parseProduct);
+    const fetchDatos = async () => {
+      // 1. Obtener los productos por categoría
+      const resProductos = await fetch(`http://localhost:3000/productos/categoria/${categoria}`);
+      const productosData = await resProductos.json();
+      const productosParseados: Product[] = productosData.map(parseProduct);
       setProductos(productosParseados);
+  
+      // 2. Obtener todas las categorías
+      const resCategorias = await fetch("http://localhost:3000/categorias");
+      const categoriasData = await resCategorias.json();
+  
+      // 3. Buscar el nombre según el ID recibido por URL
+      const catEncontrada = categoriasData.find((c: any) => String(c.id) === categoria);
+      setCategoriaNombre(catEncontrada?.nombre || "Categoría desconocida");
     };
-
-    fetchProductos();
+  
+    fetchDatos();
   }, [categoria]);
 
   return (
-    <div>
-      <Toolbar options={opcionesToolbar} />
+    <>
+    <Toolbar options={opcionesToolbar} />
+        <div className="container mx-auto px-4">
 
-      <h2 className="text-2xl font-bold capitalize mb-4">Productos de {categoria}</h2>
+        <h2 className="text-2xl font-bold capitalize mb-4">{categoriaNombre}</h2>
 
-      {productoExpandido ? (
-        <div className="mb-6">
-          <ExpandedProductCardPublic
-            product={productoExpandido}
-            inCart={!!cartItems.find((item) => item.productoId === productoExpandido.id)}
-            onAddToCart={handleAddToCart}
-            onRemoveFromCart={handleRemoveFromCart}
-            onClose={() => setProductoExpandido(null)}
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {productos.map((product) => (
-            <SimpleProductCard
-              key={product.id}
-              product={product}
-              onClick={() => setProductoExpandido(product)}
+        {productoExpandido ? (
+            <div className="mb-6">
+            <ExpandedProductCardPublic
+                product={productoExpandido}
+                inCart={!!cartItems.find((item) => item.productoId === productoExpandido.id)}
+                onAddToCart={handleAddToCart}
+                onRemoveFromCart={handleRemoveFromCart}
+                onClose={() => setProductoExpandido(null)}
             />
-          ))}
-        </div>
-      )}
+            </div>
+        ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            {productos.map((product) => (
+                <SimpleProductCard
+                key={product.id}
+                product={product}
+                onClick={() => setProductoExpandido(product)}
+                />
+            ))}
+            </div>
+        )}
 
-      <CartModal
-        isOpen={isCartOpen}
-        items={cartItems}
-        onRemoveItem={handleRemoveFromCart}
-        onCheckout={handleCheckout}
-        onClose={() => setIsCartOpen(false)}
-      />
-    </div>
+        <CartModal
+            isOpen={isCartOpen}
+            items={cartItems}
+            onRemoveItem={handleRemoveFromCart}
+            onCheckout={handleCheckout}
+            onClose={() => setIsCartOpen(false)}
+        />
+        </div>
+    </>
   );
 };
 

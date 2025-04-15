@@ -124,25 +124,24 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
                   {filteredProducts.map((product) => {
           const isExpanded = expandedProductId === product.id;
           return (
-            <div
-              key={product.id}
-              className={`relative border p-4 rounded-lg shadow transition-all cursor-pointer ${
-                isExpanded ? "col-span-2 md:col-span-4 bg-white p-6" : ""
-              }`}
-              onClick={() => setExpandedProductId(isExpanded ? null : product.id)}
-            >
+          <div
+            key={product.id}
+            className={`${isExpanded ? "col-span-2 md:col-span-4" : ""}`}
+          >
             {!isExpanded ? (
               <SimpleProductCard
                 product={product}
                 onClick={() => setExpandedProductId(product.id)}
               />
             ) : (
-              <ExpandedProductCard
-                product={product}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteProduct}
-                onClose={() => setExpandedProductId(null)}
-              />
+              <div className="relative border p-4 rounded-lg shadow bg-white transition-all cursor-pointer">
+                <ExpandedProductCard
+                  product={product}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteProduct}
+                  onClose={() => setExpandedProductId(null)}
+                />
+            </div>
             )}
               </div>
               );
