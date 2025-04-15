@@ -23,14 +23,10 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
     setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
 
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
-
   return (
-    <div className="relative w-full max-w-6xl mx-auto" id="default-carousel">
+    <div className="relative w-full max-w-7xl mx-auto" id="default-carousel">
       {/* Carrusel con mayor altura */}
-      <div className="relative h-[500px] md:h-[500px] overflow-hidden rounded-lg">
+      <div className="relative h-[350px] md:h-[350px] overflow-hidden rounded-lg">
         {images.map((src, index) => (
           <div
             key={index}
@@ -49,20 +45,6 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
 
         {/* Fondo degradado más extendido */}
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-b from-transparent via-white/60 to-white z-10 pointer-events-none" />
-      </div>
-
-      {/* Indicadores */}
-      <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full ${
-              index === currentIndex ? "bg-white" : "bg-gray-300"
-            }`}
-            aria-label={`Slide ${index + 1}`}
-          />
-        ))}
       </div>
 
       {/* Botón anterior */}
@@ -117,6 +99,7 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
 };
 
 export default Carousel;
+
 
 
 

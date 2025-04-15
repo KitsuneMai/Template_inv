@@ -7,17 +7,15 @@ interface DashboardProps {
 const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
   return (
     <div className="relative w-full max-w-6xl mx-auto mt-4">
-      {/* Carrusel */}
       <div className="relative z-10">
-        {/* Aquí va tu componente de carrusel */}
       </div>
 
-      {/* Contenedor de las tarjetas, ahora con posición relativa */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 mt-4">
-        <div className="grid grid-cols-3 gap-4">
+      {/* Tarjetas flotando encima del carrusel */}
+      <div className="absolute top-[-90px] left-0 right-0 z-20">
+        <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
           <div
-            className="p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 bg-white" // bg-white para mantener el fondo blanco
-            onClick={() => onFilterChange("all")} // Mostrar todos los productos
+            className="p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 bg-white"
+            onClick={() => onFilterChange("all")}
           >
             <h3 className="text-lg font-medium">Todos mis productos</h3>
           </div>
@@ -43,6 +41,8 @@ const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
 };
 
 export default ProductDashboard;
+
+
 
 
 
