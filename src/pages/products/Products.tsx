@@ -77,38 +77,40 @@ const Products: React.FC = () => {
   ];
 
   return (
-    <div>
-      <Toolbar options={toolbarOptions} />
-      <h1 className="text-2xl font-bold my-4">Productos</h1>
+    <>
+     <Toolbar options={toolbarOptions} />
+      <div className="container mx-auto px-4">
+        <h1 className="text-2xl font-bold my-4">Productos</h1>
 
-      {/* Carrusel con evento de clic */}
-      <Carousel onImageClick={handleImageClick} />
+        {/* Carrusel con evento de clic */}
+        <Carousel onImageClick={handleImageClick} />
 
-      {/* Dashboard con filtros */}
-      {showDashboard && <ProductDashboard onFilterChange={handleFilterChange} />}
+        {/* Dashboard con filtros */}
+        {showDashboard && <ProductDashboard onFilterChange={handleFilterChange} />}
 
-      {isFormVisible && (
-        <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
-          <ProductForm />
-        </div>
-      )}
+        {isFormVisible && (
+          <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
+            <ProductForm />
+          </div>
+        )}
 
-      {isListVisible && (
-        <div className="mt-4">
-          {showDashboard ? (
-            <ProductListDashboard filter={filter} />
-          ) : (
-            <ProductList onEditProduct={handleEditProduct} filter={filter} />
-          )}
-        </div>
-      )}
+        {isListVisible && (
+          <div className="mt-4">
+            {showDashboard ? (
+              <ProductListDashboard filter={filter} />
+            ) : (
+              <ProductList onEditProduct={handleEditProduct} filter={filter} />
+            )}
+          </div>
+        )}
 
-      {isUpdating && productToEdit && (
-        <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
-          <UpdateProductForm producto={productToEdit} onCancel={handleCancelEdit} />
-        </div>
-      )}
-    </div>
+        {isUpdating && productToEdit && (
+          <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
+            <UpdateProductForm producto={productToEdit} onCancel={handleCancelEdit} />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

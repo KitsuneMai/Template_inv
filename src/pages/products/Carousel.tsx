@@ -29,7 +29,8 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto" id="default-carousel">
-      <div className="relative h-40 overflow-hidden rounded-lg md:h-64">
+      {/* Carrusel con mayor altura */}
+      <div className="relative h-[500px] md:h-[500px] overflow-hidden rounded-lg">
         {images.map((src, index) => (
           <div
             key={index}
@@ -45,6 +46,9 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
             />
           </div>
         ))}
+
+        {/* Fondo degradado más extendido */}
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-b from-transparent via-white/60 to-white z-10 pointer-events-none" />
       </div>
 
       {/* Indicadores */}
@@ -61,7 +65,7 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
         ))}
       </div>
 
-      {/* Botones de navegación */}
+      {/* Botón anterior */}
       <button
         onClick={handlePrev}
         className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
@@ -85,6 +89,7 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
         </span>
       </button>
 
+      {/* Botón siguiente */}
       <button
         onClick={handleNext}
         className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
@@ -112,6 +117,7 @@ const Carousel: React.FC<CarouselProps> = ({ onImageClick }) => {
 };
 
 export default Carousel;
+
 
 
 
