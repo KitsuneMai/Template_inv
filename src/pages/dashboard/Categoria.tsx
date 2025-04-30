@@ -7,7 +7,7 @@ import { Product } from "../../types/Product";
 import { parseProduct } from "../../utils/parseProduct";
 import UserCart from "../../components/cart/UserCart";
 import { CartItem } from "../../types/CartItem";
-
+import OverlayPortal from "../../components/OverlayPortal";
 
 
 
@@ -97,6 +97,7 @@ const Categoria: React.FC = () => {
         <h2 className="text-2xl font-bold capitalize mb-4">{categoriaNombre}</h2>
 
         {productoExpandido ? (
+          <OverlayPortal onClose={() => setProductoExpandido(null)}>
           <div className="mb-6">
             <ExpandedProductCardPublic
               product={productoExpandido}
@@ -106,6 +107,7 @@ const Categoria: React.FC = () => {
               onClose={() => setProductoExpandido(null)} // Cierra la tarjeta expandida
             />
           </div>
+          </OverlayPortal>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {productos.map((product) => (

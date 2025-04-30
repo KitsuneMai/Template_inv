@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // 👈 Importante
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,21 +16,21 @@ export default function Login() {
     try {
       const response = await fetch("http://localhost:3000/usuarios/login", {
         method: "POST",
-        credentials: 'include',
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        
       });
 
       const data = await response.json();
 
       if (response.ok) {
         console.log("Login exitoso:", data);
-        // Aquí puedes redirigir al usuario o guardar el token de autenticación, por ejemplo.
+
+        // Redirigir al Dashboard
+        navigate("/");
       } else {
-        // Personaliza el mensaje de error según lo que venga del backend.
         setErrorMessage(data.message || "Error en el inicio de sesión");
       }
     } catch (error) {
@@ -82,3 +83,4 @@ export default function Login() {
     </div>
   );
 }
+

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import UpdateProductModal from "../products/UpdateProductModal";
 import ExpandedProductCard from "./ExpandedProductCard";
 import SimpleProductCard from "./SimpleProductCard";
+import OverlayPortal from "../../components/OverlayPortal";
+
 
 interface Product {
   id: number;
@@ -124,24 +126,21 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
                   {filteredProducts.map((product) => {
           const isExpanded = expandedProductId === product.id;
           return (
-          <div
-            key={product.id}
-            className={`${isExpanded ? "col-span-2 md:col-span-4" : ""}`}
-          >
-            {!isExpanded ? (
-              <SimpleProductCard
-                product={product}
-                onClick={() => setExpandedProductId(product.id)}
-              />
-            ) : (
-              <div className="relative border p-4 rounded-lg shadow bg-white transition-all cursor-pointer">
+          <div key={product.id}>
+            <SimpleProductCard
+              product={product}
+              onClick={() => setExpandedProductId(product.id)}
+            />
+
+            {expandedProductId === product.id && (
+              <OverlayPortal onClose={() => setExpandedProductId(null)}>
                 <ExpandedProductCard
                   product={product}
                   onEdit={handleEditClick}
                   onDelete={handleDeleteProduct}
                   onClose={() => setExpandedProductId(null)}
                 />
-            </div>
+              </OverlayPortal>
             )}
               </div>
               );
