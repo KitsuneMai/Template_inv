@@ -29,7 +29,7 @@ const UserItem = ({ user }:any) => {
                   <strong>Email:</strong> {user.email}
                 </p>
                 <p className="text-sm">
-                  <strong>Rol:</strong> {user.role}
+                  <strong>Rol:</strong> {user.roles}
                 </p>
                 <p className="text-sm">
                   <strong>Estado:</strong> {user.active ? "Activo" : "Inactivo"}

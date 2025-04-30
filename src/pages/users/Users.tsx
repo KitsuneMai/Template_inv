@@ -16,7 +16,7 @@ const UserList = () => {
 
   useEffect(() => {
     // Realiza la petición GET al endpoint del backend.
-    fetch('http://localhost:3000/usuarios/', {
+    fetch('http://localhost:3000/usuarios', {
       method: 'GET',
       credentials: 'include', // Permite el envío de cookies, incluyendo el JWT almacenado.
     })
