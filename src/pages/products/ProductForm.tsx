@@ -63,6 +63,7 @@ const ProductForm: React.FC = () => {
       const response = await fetch("http://localhost:3000/productos", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (response.ok) {

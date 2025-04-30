@@ -6,6 +6,8 @@ import UpdateProductForm from "../products/UpdateProductForm";
 import ProductDashboard from "../products/ProductDashboard";
 import Carousel from "../products/Carousel"; // Importamos el carrusel
 import ProductListDashboard from "./ProductListDashboard";
+import SalesFilterPanel from "../../components/ventas/SalesFilterPanel";
+
 
 interface Product {
   id: number;
@@ -28,6 +30,8 @@ const Products: React.FC = () => {
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [showDashboard, setShowDashboard] = useState(false);
   const [filter, setFilter] = useState<string>("");
+  const [showSalesPanel, setShowSalesPanel] = useState(false);
+
 
   const toggleForm = () => {
     setIsFormVisible((prev) => !prev);
@@ -58,11 +62,19 @@ const Products: React.FC = () => {
     console.log(`Click en la imagen del carrusel, índice: ${index}`);
   
     if (index === 0) {
-      console.log(" Click en la imagen 0 - Mostrando Dashboard");
+      console.log("Click en la imagen 0 - Mostrando Dashboard de Productos");
       setShowDashboard(true);
+      setShowSalesPanel(false); // Asegura que el panel de ventas no esté visible
+      setIsListVisible(true);
+    } else if (index === 1) {
+      console.log("Click en la imagen 1 - Mostrando Panel de Ventas");
+      setShowDashboard(false);
+      setShowSalesPanel(true);
       setIsListVisible(true);
     } else {
-      console.log(" No es la imagen 0, no se muestra el Dashboard");
+      setShowDashboard(false);
+      setShowSalesPanel(false);
+      setIsListVisible(false);
     }
   };
 
@@ -88,6 +100,10 @@ const Products: React.FC = () => {
         {/* Dashboard con filtros */}
         {showDashboard && <ProductDashboard onFilterChange={handleFilterChange} />}
 
+        {showSalesPanel && (
+          <SalesFilterPanel onFilterChange={handleFilterChange} />
+        )}
+
         {isFormVisible && (
           <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
             <ProductForm />
@@ -98,7 +114,7 @@ const Products: React.FC = () => {
           <div className="mt-4">
             {showDashboard ? (
               <ProductListDashboard filter={filter} />
-            ) : (
+            ) : showSalesPanel ? null : (
               <ProductList onEditProduct={handleEditProduct} filter={filter} />
             )}
           </div>
