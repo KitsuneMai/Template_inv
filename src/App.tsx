@@ -9,6 +9,9 @@ import Register from "./pages/register/register";
 import Categoria from "./pages/dashboard/Categoria";
 import CartModal from "./components/cart/CartModal";
 import { CartItem } from "./types/CartItem";
+import TiendaDinamica from "./pages/tienda/TiendaDinamica";
+
+
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -35,6 +38,12 @@ function App() {
         <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/tienda-demo" element={ <TiendaDinamica
+              portada="/images/jordanair.jpg"
+              logo="/images/logonike.jpg"
+            />
+          }
+        />
       </Routes>
 
       <CartModal
