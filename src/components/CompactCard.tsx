@@ -11,11 +11,11 @@ export default function CompactCard({ image, title, description }: CompactCardPr
   return (
     <div className="relative group w-full">
       {/* Fondo desplazado detrás */}
-      <div className="absolute -top-3 right-3 w-full h-full rounded-lg bg-light-pink group-hover:bg-secondary-hover transition-all duration-300 group-hover:translate-x-2 translate-x-0 z-0" />
+      <div className="absolute -top-3 right-3 w-[100%] h-[50%] rounded-lg bg-gray-200 group-hover:bg-secondary-hover transition-all duration-300 group-hover:translate-x-[9%] translate-x-0 z-0" />
 
-      {/* Tarjeta */}
-      <div className="relative flex flex-col border border-gray-200 rounded-lg shadow-sm bg-white dark:bg-white dark:border-gray-700 z-10 transition-all duration-300 group-hover:shadow-md overflow-hidden">
-        {/* Imagen contenida correctamente */}
+      {/* Tarjeta principal con zoom al hacer hover */}
+      <div className="relative flex flex-col border border-gray-200 rounded-lg shadow-sm bg-white z-10 transition-all duration-300 transform group-hover:scale-[1.02] group-hover:shadow-md overflow-hidden">
+        {/* Imagen */}
         <div className="w-full aspect-[4/3] overflow-hidden rounded-t-lg">
           <img
             className="w-full h-full object-cover"
@@ -25,15 +25,17 @@ export default function CompactCard({ image, title, description }: CompactCardPr
         </div>
 
         {/* Contenido */}
-        <div className="p-4 flex flex-col justify-between flex-grow">
+        <div className="p-4 flex flex-col justify-between flex-grow min-h-[220px]">
           <div>
-            <h5 className="mb-2 text-xl font-bold tracking-tight text-highlight dark:text-highkight">
+            <h5 className="mb-2 text-xl font-bold tracking-tight text-highlight group-hover:text-gray-800 transition-colors duration-300">
               {title}
             </h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{description}</p>
+            <p className="mb-3 font-normal text-gray-700 group-hover:text-gray-800 transition-colors duration-300">
+              {description}
+            </p>
           </div>
 
-          {/* Botón solo visual */}
+          {/* Botón visual */}
           <div className="mt-auto self-start">
             <CustomButton label="Ver más" size="sm" />
           </div>

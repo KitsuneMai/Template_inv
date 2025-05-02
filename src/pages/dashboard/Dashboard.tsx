@@ -9,7 +9,7 @@ import FancyCard from "../../components/FancyCard";
 import CustomButton from "../../components/CustomButton";
 import CompactCard from "../../components/CompactCard";
 import CollageSection from "../../components/CollageSection";
-
+import Footer from "../../components/Footer";
 
 
 const Dashboard: React.FC = () => {
@@ -62,12 +62,12 @@ const Dashboard: React.FC = () => {
       {/* Sección con fondo gris claro para las tarjetas compactas */}
       <div className="w-full bg-gray-100 py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-semibold text-highlight mb-10">
+          <h2 className="text-3xl font-semibold text-highlight mb-10">
             NUEVOS DESTACADOS
           </h2>
 
           {/* Grid de tarjetas */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-24">
             <CompactCard
               image="/images/helados2.jpg"
               title="Plazoleta de comidas"
@@ -89,15 +89,10 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="mt-12">
+
         <CollageSection />
-      </div>
-
-      {/* Lista de categorías fuera de la sección destacada */}
-      <div className="relative w-full max-w-screen-xl mx-auto mt-8">
-        <CategoryList />
-      </div>
-
+        <Footer />
+        
       <CartModal
         isOpen={isCartOpen}
         items={cartItems}

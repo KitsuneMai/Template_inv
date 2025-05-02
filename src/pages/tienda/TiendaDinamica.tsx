@@ -16,7 +16,7 @@ interface TiendaDinamicaProps {
         </div>
   
         {/* Logo superpuesto, también responsivo */}
-        <div className="absolute top-6 left-4 sm:top-10 sm:left-6 bg-white p-1 rounded-full shadow-lg">
+        <div className="absolute top-10 left-8 sm:top-24 sm:left-20 bg-white p-1 rounded-full shadow-lg">
           <img
             src={logo}
             alt="Logo de la tienda"
