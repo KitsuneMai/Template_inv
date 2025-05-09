@@ -1,16 +1,12 @@
 import React from "react";
-import { ShoppingCart } from "lucide-react";
-import CategoryList from "../../components/categories/CategoryList";
 import CartModal from "../../components/cart/CartModal";
 import { CartItem } from "../../types/CartItem";
-import Navbar from "../../components/Navbar";
 import Carousel from "../../components/CarouselDashboard";
-import FancyCard from "../../components/FancyCard";
 import CustomButton from "../../components/CustomButton";
 import CompactCard from "../../components/CompactCard";
 import CollageSection from "../../components/CollageSection";
 import Footer from "../../components/Footer";
-
+import FancyCardCarousel from "../../components/FancyCardCarousel";
 
 const Dashboard: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
@@ -40,11 +36,28 @@ const Dashboard: React.FC = () => {
 
           {/* Tarjeta destacada */}
           <div className="mb-12"> {/* Aumenté el margen inferior */}
-            <FancyCard
-              image="/images/joyeria.jpeg"
-              title="Producto Estrella"
-              description="Este producto revolucionará tu forma de trabajar."
-              href="/tienda-demo"
+          <FancyCardCarousel
+            cards={[
+              {
+                image: "/images/joyeria.jpeg",
+                title: "Producto Estrella",
+                description: "Este producto revolucionará tu forma de trabajar.",
+                href: "/tienda-demo"
+              },
+              {
+                image: "/images/gym.jpg",
+                title: "Nuestro Gimnasio",
+                description: "Resultados garantizados en el mejor ambiente.",
+                href: "/tienda/1"
+              },
+              {
+                image: "/images/helados2.jpg",
+                title: "Helados Artesanales",
+                description: "El sabor que refresca tu día.",
+                href: "/tienda-helados"
+              }
+            ]}
+            indicatorsClassName="top-[130%] left-[10%]"
             />
           </div>
 

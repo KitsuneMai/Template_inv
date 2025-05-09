@@ -1,13 +1,14 @@
-import { useState } from "react";
-import Toolbar, { ToolbarOption } from "../../components/Toolbar";
+import { useRef, useState } from "react";
 import ProductForm from "../products/ProductForm";
-// import ProductList from "../products/ProductList";
 import UpdateProductForm from "../products/UpdateProductForm";
 import ProductDashboard from "../products/ProductDashboard";
-import Carousel from "../products/Carousel"; // Importamos el carrusel
 import ProductListDashboard from "./ProductListDashboard";
 import SalesFilterPanel from "../../components/ventas/SalesFilterPanel";
-
+import StoreHeader from "../../components/StoreHeader";
+import AnimatedTabMenu from "./AnimatedTabMenu";
+import TiendaSettings from "./TiendaSettings";
+import TiendaInfo from "../../components/TiendaInfo";
+import Footer from "../../components/Footer";
 
 interface Product {
   id: number;
@@ -17,6 +18,7 @@ interface Product {
   cantidad: number;
   imagenUrl: string;
   categoria_id: number;
+  tienda_id: number;
   categoria?: {
     id: number;
     nombre: string;
@@ -24,113 +26,143 @@ interface Product {
 }
 
 const Products: React.FC = () => {
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [isListVisible, setIsListVisible] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [activeView, setActiveView] = useState<"form" | "edit" | "list" | null>("list");
+  const [productToEdit] = useState<Product | null>(null);
   const [showDashboard, setShowDashboard] = useState(false);
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>(""); // Filtro actual
   const [showSalesPanel, setShowSalesPanel] = useState(false);
+  const [selected, setSelected] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [searchTerm,] = useState("");
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const settingsRef = useRef<HTMLDivElement | null>(null);
 
+  // Referencia al formulario
+  const formRef = useRef<HTMLDivElement | null>(null);
+
+  const options = [
+    { label: "Productos", value: "productos" },
+    { label: "Configuración", value: "settings" },
+    { label: "Buscar", value: "search" },
+  ];
 
   const toggleForm = () => {
-    setIsFormVisible((prev) => !prev);
-    setIsListVisible(false);
-    setIsUpdating(false);
-  };
-
-  const toggleList = () => {
-    setIsListVisible((prev) => !prev);
-    setIsFormVisible(false);
-    setIsUpdating(false);
-  };
-
-  const handleEditProduct = (product: Product) => {
-    setProductToEdit(product);
-    setIsUpdating(true);
-    setIsListVisible(false);
-    setIsFormVisible(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsUpdating(false);
-    setIsListVisible(true);
-  };
-
-  // Maneja el clic en imágenes del carrusel
-  const handleImageClick = (index: number) => {
-    console.log(`Click en la imagen del carrusel, índice: ${index}`);
-  
-    if (index === 0) {
-      console.log("Click en la imagen 0 - Mostrando Dashboard de Productos");
-      setShowDashboard(true);
-      setShowSalesPanel(false); // Asegura que el panel de ventas no esté visible
-      setIsListVisible(true);
-    } else if (index === 1) {
-      console.log("Click en la imagen 1 - Mostrando Panel de Ventas");
-      setShowDashboard(false);
-      setShowSalesPanel(true);
-      setIsListVisible(true);
-    } else {
-      setShowDashboard(false);
-      setShowSalesPanel(false);
-      setIsListVisible(false);
-    }
+    setActiveView((prev) => {
+      const next = prev === "form" ? "list" : "form";
+      // Si se activa el formulario, hacer scroll
+      if (next === "form") {
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100); // pequeño delay para asegurar renderizado
+      }
+      return next;
+    });
   };
 
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
-    setIsListVisible(true);
+    setActiveView("list");
   };
 
-  const toolbarOptions: ToolbarOption[] = [
-    { label: isFormVisible ? "Cerrar Formulario" : "Agregar Producto", onClick: toggleForm },
-    { label: isListVisible ? "Ocultar Productos" : "Gestionar Productos", onClick: toggleList },
-  ];
-
   return (
-    <>
-     <Toolbar options={toolbarOptions} />
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-bold my-4">Productos</h1>
+     <div className="min-h-screen bg-gradient-to-br from-pink-500 to-orange-400 transition-all duration-200">
+      <StoreHeader />
 
-        {/* Carrusel con evento de clic */}
-        <Carousel onImageClick={handleImageClick} />
+      <div className="p-0">
+        <AnimatedTabMenu
+          options={options}
+          selected={selected}
+          onChange={(value) => {
+            setSelected(value);
+            setShowSettings(false);
+            setShowDashboard(false); // Oculta dashboard por defecto
+            setShowSalesPanel(false); // Oculta panel de ventas
+            setActiveView(null); // Oculta formularios o listas
+            setFilter(""); // Limpia filtros
+            setShowAllProducts(false); // Oculta todos los productos
 
-        {/* Dashboard con filtros */}
-        {showDashboard && <ProductDashboard onFilterChange={handleFilterChange} />}
+            if (value === "productos") {
+              setShowDashboard(true);
+              setActiveView("list");
+            }
 
-        {showSalesPanel && (
-          <SalesFilterPanel onFilterChange={handleFilterChange} />
+            if (value === "settings") {
+              setShowSettings(true);
+              setTimeout(() => {
+                settingsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 100);
+            }
+
+          }}
+          onFilterChange={handleFilterChange}
+          onShowDashboard={() => {
+            setShowDashboard(true);
+            setShowSalesPanel(false);
+            setActiveView(null);
+            setShowSettings(false);
+          }}
+          onShowSettings={() => setShowSettings(true)}
+        />
+      </div>
+      <TiendaInfo />
+
+      <div className="container mx-auto px-2 mt-20">
+        {showSettings && (
+          <div ref={settingsRef}>
+            <TiendaSettings />
+          </div>
         )}
 
-        {isFormVisible && (
-          <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
+
+        {showDashboard && (
+          <ProductDashboard
+            onFilterChange={handleFilterChange}
+            onAddProductClick={toggleForm}
+          />
+        )}
+
+        {showSalesPanel && <SalesFilterPanel onFilterChange={handleFilterChange} />}
+
+        {activeView === "form" && (
+          <div ref={formRef} className="mt-4 p-4 bg-gray-100 border rounded-lg mb-20">
             <ProductForm />
           </div>
         )}
 
-        {isListVisible && (
-          <div className="mt-4">
-            {showDashboard ? (
-              <ProductListDashboard filter={filter} />
-            ) : showSalesPanel ? null : (
-              <ProductList onEditProduct={handleEditProduct} filter={filter} />
-            )}
-          </div>
+        {activeView === "list" && showDashboard && (
+          (filter === "all" || filter === "lowStock" || filter === "search") && (
+            <div className="mt-4">
+              <ProductListDashboard
+                filter={filter}
+                searchTerm={filter === "search" ? searchTerm : undefined}
+              />
+            </div>
+          )
         )}
 
-        {isUpdating && productToEdit && (
+        {activeView === "edit" && productToEdit && (
           <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
-            <UpdateProductForm producto={productToEdit} onCancel={handleCancelEdit} />
+            <UpdateProductForm
+              producto={productToEdit}
+              onClose={() => setActiveView("list")}
+              onSuccess={() => {
+                setActiveView("list");
+                // Recargar productos si es necesario
+              }}
+            />
           </div>
         )}
       </div>
-    </>
+      <Footer/>
+    </div>
   );
 };
 
 export default Products;
+
+
+
+
 
 
 

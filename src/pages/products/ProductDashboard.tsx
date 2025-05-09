@@ -1,18 +1,14 @@
-import React from "react";
-
 interface DashboardProps {
   onFilterChange: (filter: string) => void;
+  onAddProductClick: () => void; // nueva prop
 }
 
-const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
+const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange, onAddProductClick }) => {
   return (
-    <div className="relative w-full max-w-6xl mx-auto mt-4">
-      <div className="relative z-10">
-      </div>
-
-      {/* Tarjetas flotando encima del carrusel */}
+    <div className="relative w-full max-w-8xl mx-auto mt-32 mb-20">
       <div className="absolute top-[-90px] left-0 right-0 z-20">
-        <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
+        <div className="grid grid-cols-4 gap-4 max-w-5xl mx-auto">
+          {/* Todos mis productos */}
           <div
             className="p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 bg-white"
             onClick={() => onFilterChange("all")}
@@ -20,6 +16,7 @@ const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
             <h3 className="text-lg font-medium">Todos mis productos</h3>
           </div>
 
+          {/* Productos bajos en stock */}
           <div
             className="p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 bg-white"
             onClick={() => onFilterChange("lowStock")}
@@ -28,11 +25,21 @@ const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
             <p className="text-gray-500">Menos de 6 unidades</p>
           </div>
 
+          {/* Buscar productos */}
           <div
             className="p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 bg-white"
             onClick={() => onFilterChange("search")}
           >
             <h3 className="text-lg font-medium">Buscar productos</h3>
+          </div>
+
+          {/* Agregar producto */}
+          <div
+            className="p-4 border rounded-lg shadow cursor-pointer hover:bg-green-100 bg-white"
+            onClick={onAddProductClick}
+          >
+            <h3 className="text-lg font-medium text-green-700">Agregar producto</h3>
+            <p className="text-sm text-gray-500">Crea uno nuevo</p>
           </div>
         </div>
       </div>
@@ -40,9 +47,8 @@ const ProductDashboard: React.FC<DashboardProps> = ({ onFilterChange }) => {
   );
 };
 
+
 export default ProductDashboard;
-
-
 
 
 

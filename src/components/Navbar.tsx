@@ -11,9 +11,12 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
-      <nav className="relative bg-gradient-to-b from-black/100 via-black/30 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
+      <nav className="relative bg-gradient-to-b from-black/100 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
         <Link to="/">
           <h1 className="text-xl font-bold ml-6">Mi centro comercial</h1>
+        </Link>
+        <Link to="/almacenes">
+          <h2 className="text-xl semi-bold ml-6">Almacenes</h2>
         </Link>
         <div className="flex items-center gap-3">
           {/* Botón del carrito */}

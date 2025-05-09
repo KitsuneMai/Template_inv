@@ -10,8 +10,8 @@ import Categoria from "./pages/dashboard/Categoria";
 import CartModal from "./components/cart/CartModal";
 import { CartItem } from "./types/CartItem";
 import TiendaDinamica from "./pages/tienda/TiendaDinamica";
-
-
+import TiendaIndividual from "./pages/tienda/TiendaIndividual";
+import TodasLasTiendas from "./pages/tienda/TodasLasTiendas";
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -38,12 +38,9 @@ function App() {
         <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/tienda-demo" element={ <TiendaDinamica
-              portada="/images/jordanair.jpg"
-              logo="/images/logonike.jpg"
-            />
-          }
-        />
+        <Route path="/tienda-demo" element={ <TiendaDinamica/>}/>
+        <Route path="/tienda/:id" element={<TiendaIndividual/>}/>
+        <Route path="/almacenes" element={<TodasLasTiendas/>}/>      
       </Routes>
 
       <CartModal
