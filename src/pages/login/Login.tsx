@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import CustomButton from "../../components/CustomButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -29,7 +30,7 @@ export default function Login() {
         console.log("Login exitoso:", data);
 
         // Redirigir al Dashboard
-        navigate("/");
+        setTimeout(() => navigate("/"), 0);
       } else {
         setErrorMessage(data.message || "Error en el inicio de sesión");
       }
@@ -44,7 +45,7 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-96 p-6 bg-white shadow-md rounded">
-        <h2 className="text-xl font-semibold text-center mb-4">Login</h2>
+        <h2 className="text-xl font-semibold text-center mb-4">Iniciar Sesión</h2>
         <form onSubmit={handleLogin}>
           <input
             type="email"
@@ -62,13 +63,13 @@ export default function Login() {
             className="mb-3 w-full p-2 border border-gray-300 rounded"
             required
           />
-          <button
+          <CustomButton
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
-          >
-            {loading ? "Cargando..." : "Login"}
-          </button>
+            label={loading ? "Cargando..." : "Login"}
+            className="w-full bg-blue-500 hover:bg-blue-600 py-2 rounded transition-colors"
+            size="lg" // Ajusta según necesidad
+          />
         </form>
         {errorMessage && (
           <p className="mt-4 text-red-500 text-center">{errorMessage}</p>

@@ -1,5 +1,6 @@
 import  { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import CustomButton from "../../components/CustomButton";
 
 const UserItem = ({ user }:any) => {
     const [open, setOpen] = useState(false);
@@ -7,13 +8,13 @@ const UserItem = ({ user }:any) => {
     return (
       <div className="border-b py-2 px-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-medium">{user.name}</h2>
-          <button
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+          <h2 className="text-lg font-medium">{user.email}</h2>
+          <CustomButton
+            label={open ? "Ocultar" : "Ver más"}
             onClick={() => setOpen(!open)}
-          >
-            {open ? "Ocultar" : "Ver más"}
-          </button>
+            size="sm"
+            className="text-sm" // Opcional: si quieres ajustar más el tamaño
+          />
         </div>
         <AnimatePresence>
           {open && (
@@ -30,9 +31,6 @@ const UserItem = ({ user }:any) => {
                 </p>
                 <p className="text-sm">
                   <strong>Rol:</strong> {user.roles}
-                </p>
-                <p className="text-sm">
-                  <strong>Estado:</strong> {user.active ? "Activo" : "Inactivo"}
                 </p>
               </div>
             </motion.div>

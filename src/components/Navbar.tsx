@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, ChevronUp, ShoppingCart, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { ChevronDown, ChevronUp, ShoppingCart, User, Loader } from "lucide-react";
 
 interface NavbarProps {
   onCartClick: () => void;
@@ -8,10 +8,74 @@ interface NavbarProps {
 
 const Navbar = ({ onCartClick }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+
+  // Verificar sesión al montar el componente
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/carrito/usuario', {
+          method: 'GET',
+          credentials: 'include' // Para incluir las cookies
+        });
+        
+        if (response.ok) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
+  }, [location]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:3000/usuarios/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      setIsLoggedIn(false);
+      setShowLogoutModal(false);
+      // Opcional: redirigir al home
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+  
+  const LogoutModal = () => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg max-w-sm w-full">
+        <h3 className="text-lg font-semibold mb-4 text-gray-700">Cerrar sesión</h3>
+        <p className="mb-4 text-gray-700">¿Estás seguro que deseas salir?</p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setShowLogoutModal(false)}
+            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
-      <nav className="relative bg-gradient-to-b from-black/100 via-black/30 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
+      <nav className="relative bg-gradient-to-b from-black/90 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
         <Link to="/">
           <h1 className="text-xl font-bold ml-6">Mi centro comercial</h1>
         </Link>
@@ -25,12 +89,19 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
           </button>
 
           {/* Botón de perfil */}
-          <Link
-            to="/login"
-            className="p-2 rounded-full hover:bg-black/40 transition-colors"
-          >
-            <User size={20} />
-          </Link>
+          {isLoading ? (
+            <Loader className="animate-spin" size={20} />
+          ) : (
+            <button
+              onClick={() => isLoggedIn 
+                ? setShowLogoutModal(true)
+                : (window.location.href = '/login')}
+              className="p-2 rounded-full hover:bg-black/40 transition-colors"
+            >
+              <User size={20} />
+            </button>
+          )}
+          {showLogoutModal && <LogoutModal />}
 
           {/* Menú desplegable */}
           <div className="relative">
@@ -63,6 +134,13 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
                   onClick={() => setIsOpen(false)}
                 >
                   Usuarios
+                </Link>
+                <Link
+                  to="/nosotros"
+                  className="block px-4 py-2 hover:bg-gray-200"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Nosotros
                 </Link>
               </div>
             )}

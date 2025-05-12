@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
+  const [roles, setRoles] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +28,7 @@ export default function Register() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, roles:[roles.trim()] }),
       });
 
       const data = await response.json();
@@ -59,6 +60,16 @@ export default function Register() {
             className="mb-3 w-full p-2 border border-gray-300 rounded"
             required
           />
+          <select
+            value={roles}
+            onChange={(e) => setRoles(e.target.value)}
+            className="mb-3 w-full p-2 border border-gray-300 rounded"
+            required
+          >
+            <option value="" disabled>Selecciona un rol</option>
+            <option value="user">Usuario</option>
+            <option value="admin">Administrador</option>
+          </select>
           <input
             type="password"
             placeholder="Contraseña"

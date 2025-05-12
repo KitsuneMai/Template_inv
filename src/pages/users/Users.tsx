@@ -46,7 +46,7 @@ const UserList = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg">
+    <div className="max-w-md mx-auto mt-32 bg-white shadow-md rounded-lg">
       {users.map((user) => (
         <UserItem key={user.id} user={user} />
       ))}
