@@ -9,6 +9,7 @@ interface Product {
   cantidad: number;
   imagenUrl: string;
   categoria_id: number;
+  tienda_id: number;
   categoria: {
     id: number;
     nombre: string;

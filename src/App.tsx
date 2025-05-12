@@ -10,8 +10,11 @@ import Categoria from "./pages/dashboard/Categoria";
 import CartModal from "./components/cart/CartModal";
 import { CartItem } from "./types/CartItem";
 import TiendaDinamica from "./pages/tienda/TiendaDinamica";
+import TiendaIndividual from "./pages/tienda/TiendaIndividual";
+import TodasLasTiendas from "./pages/tienda/TodasLasTiendas";
+import Carrito from "./pages/Carrito";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Nosotros from "./pages/nosotros/Nosotros";
-
 
 
 function App() {
@@ -30,22 +33,27 @@ function App() {
 
   return (
     <Router>
-      <Navbar onCartClick={() => setIsCartOpen(true)} />
+      <Navbar/>
 
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard/categoria/:categoria" element={<Categoria />} />
-        <Route path="/products" element={<Products />} />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/tienda-demo" element={ <TiendaDinamica/>}/>
+        <Route path="/tienda/:id" element={<TiendaIndividual/>}/>
+        <Route path="/almacenes" element={<TodasLasTiendas/>}/>  
+        <Route path="/carrito" element={<Carrito />} />    
         <Route path="/nosotros" element={<Nosotros/>} />
-        <Route path="/tienda-demo" element={ <TiendaDinamica
-              portada="/images/jordanair.jpg"
-              logo="/images/logonike.jpg"
-            />
-          }
-        />
       </Routes>
 
       <CartModal

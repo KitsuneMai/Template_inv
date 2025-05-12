@@ -4,7 +4,6 @@ import ExpandedProductCard from "./ExpandedProductCard";
 import SimpleProductCard from "./SimpleProductCard";
 import OverlayPortal from "../../components/OverlayPortal";
 
-
 interface Product {
   id: number;
   nombre: string;
@@ -13,6 +12,7 @@ interface Product {
   cantidad: number;
   imagenUrl: string;
   categoria_id: number;
+  tienda_id: number;
   categoria: {
     id: number;
     nombre: string;
@@ -21,39 +21,56 @@ interface Product {
 
 interface ProductListProps {
   filter: string;
+  searchTerm?: string;
 }
 
-const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
+const ProductListDashboard: React.FC<ProductListProps> = ({ filter, searchTerm }) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [expandedProductId, setExpandedProductId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm ?? "");
+  const [productosCargados, setProductosCargados] = useState(false);
 
-  const fetchProducts = async () => {
+  const fetchMisProductos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/productos");
+      const response = await fetch("http://localhost:3000/productos/mis-productos", {
+        credentials: "include",
+      });
       const data = await response.json();
-  
+
       if (Array.isArray(data)) {
         const mappedData = data.map((item: any) => ({
           ...item,
           categoria_id: item.categoria?.id ?? 0,
-          categoria: item.categoria ?? { id: 0, nombre: "" }, 
+          categoria: item.categoria ?? { id: 0, nombre: "" },
         }));
-        
         setProducts(mappedData);
+        setProductosCargados(true);
       } else {
         console.error("Error: la API no devolvió un array", data);
       }
     } catch (error) {
-      console.error("Error al cargar productos:", error);
+      console.error("Error al cargar tus productos:", error);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (!productosCargados && (filter === "all" || filter === "lowStock" || filter === "search")) {
+      fetchMisProductos();
+    }
+  }, [filter, productosCargados]);
+
+  // Filtrar productos basados en la condición de filtro
+  let filteredProducts = products;
+
+  if (filter === "lowStock") {
+    filteredProducts = products.filter((product) => product.cantidad < 6);
+  } else if (filter === "search" && localSearchTerm) {
+    filteredProducts = products.filter((product) =>
+      product.nombre.toLowerCase().includes(localSearchTerm.toLowerCase())
+    );
+  }
 
   const handleEditClick = (product: Product) => {
     setSelectedProduct(product);
@@ -66,23 +83,10 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
   };
 
   const handleUpdateSuccess = () => {
-    fetchProducts();
+    fetchMisProductos();
     closeModal();
   };
 
-  if (!filter) {
-    return null;
-  }
-
-  let filteredProducts = products;
-  if (filter === "lowStock") {
-    filteredProducts = products.filter((product) => product.cantidad < 6);
-  } else if (filter === "search" && searchTerm) {
-    filteredProducts = products.filter((product) =>
-      product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
-  // Eliminar producto
   const handleDeleteProduct = async (id: number) => {
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este producto?");
     if (!confirmDelete) return;
@@ -93,7 +97,6 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
       });
 
       if (response.ok) {
-        // Si el backend responde con 204 No Content, actualizamos la lista de productos
         setProducts((prevProductos) => prevProductos.filter((producto) => producto.id !== id));
       } else {
         console.error("Error al eliminar producto");
@@ -106,45 +109,50 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
   return (
     <div className="mt-6">
       <h2 className="text-lg font-semibold mb-4">
-        {filter === "lowStock" ? "Productos bajos en stock" : "Productos actuales"}
+        {filter === "lowStock"
+          ? "Productos bajos en stock"
+          : filter === "search"
+          ? "Buscar productos"
+          : "Todos mis productos"}
       </h2>
 
       {filter === "search" && (
         <input
           type="text"
           placeholder="Buscar producto..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={localSearchTerm}
+          onChange={(e) => setLocalSearchTerm(e.target.value)}
           className="w-full p-2 border rounded mb-4"
         />
       )}
 
-      {filteredProducts.length === 0 ? (
+      {!productosCargados ? (
+        <p className="text-gray-500 mt-4">Selecciona una opción para ver tus productos.</p>
+      ) : filteredProducts.length === 0 ? (
         <p className="text-gray-500 mt-4">No hay productos disponibles.</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {filteredProducts.map((product) => {
-          const isExpanded = expandedProductId === product.id;
-          return (
-          <div key={product.id}>
-            <SimpleProductCard
-              product={product}
-              onClick={() => setExpandedProductId(product.id)}
-            />
-
-            {expandedProductId === product.id && (
-              <OverlayPortal onClose={() => setExpandedProductId(null)}>
-                <ExpandedProductCard
+          {filteredProducts.map((product) => {
+            const isExpanded = expandedProductId === product.id;
+            return (
+              <div key={product.id}>
+                <SimpleProductCard
                   product={product}
-                  onEdit={handleEditClick}
-                  onDelete={handleDeleteProduct}
-                  onClose={() => setExpandedProductId(null)}
+                  onClick={() => setExpandedProductId(isExpanded ? null : product.id)}
                 />
-              </OverlayPortal>
-            )}
+                {isExpanded && (
+                  <OverlayPortal onClose={() => setExpandedProductId(null)}>
+                    <ExpandedProductCard
+                      product={product}
+                      onEdit={handleEditClick}
+                      onDelete={handleDeleteProduct}
+                      onClose={() => setExpandedProductId(null)}
+                    />
+                  </OverlayPortal>
+                )}
               </div>
-              );
-            })}
+            );
+          })}
         </div>
       )}
 
@@ -161,6 +169,7 @@ const ProductListDashboard: React.FC<ProductListProps> = ({ filter }) => {
 };
 
 export default ProductListDashboard;
+
 
 
 

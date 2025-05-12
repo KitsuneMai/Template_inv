@@ -14,9 +14,13 @@ const ProductForm: React.FC = () => {
   const [cantidad, setCantidad] = useState<number>(0);
   const [imagen, setImagen] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [tiendaId, setTiendaId] = useState<number | null>(null);
+
 
   useEffect(() => {
-    fetch("http://localhost:3000/categorias")
+    fetch("http://localhost:3000/categorias",{
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         setCategories(data);
@@ -25,7 +29,18 @@ const ProductForm: React.FC = () => {
         }
       })
       .catch((error) => console.error("Error al obtener categorías:", error));
-  }, []);
+
+      // Obtener tienda del usuario logueado
+      fetch("http://localhost:3000/carrito/tienda", {
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.id) setTiendaId(data.id);
+        })
+        .catch((error) => console.error("Error al obtener tienda del usuario:", error));
+    }, []);
+      
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -37,17 +52,17 @@ const ProductForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nombre || !descripcion || precio <= 0 || cantidad <= 0 || !selectedCategory) {
-      console.error("Todos los campos son obligatorios y deben ser válidos.");
+    if (!nombre || !descripcion || precio <= 0 || cantidad <= 0 || !selectedCategory || !tiendaId) {
+      console.error("Todos los campos son obligatorios y deben ser válidos, incluyendo la tienda.");
       return;
     }
-
+  
     const categoriaId = parseInt(selectedCategory);
     if (isNaN(categoriaId)) {
       console.error("El ID de categoría no es válido.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("nombre", nombre);
     formData.append("descripcion", descripcion);
@@ -58,17 +73,16 @@ const ProductForm: React.FC = () => {
     if (imagen) {
       formData.append("file", imagen);
     }
-
+  
     try {
       const response = await fetch("http://localhost:3000/productos", {
         method: "POST",
         body: formData,
         credentials: "include",
       });
-
+  
       if (response.ok) {
-        alert(" Producto agregado correctamente");
-
+        alert("Producto agregado correctamente");
         // Limpiar campos después del registro exitoso
         setNombre("");
         setDescripcion("");
@@ -77,15 +91,15 @@ const ProductForm: React.FC = () => {
         setImagen(null);
         setPreview(null);
       } else {
-        console.error(" Error al agregar producto:", await response.json());
+        console.error("Error al agregar producto:", await response.json());
       }
     } catch (error) {
-      console.error(" Error en la solicitud:", error);
+      console.error("Error en la solicitud:", error);
     }
-  };
+  };  
 
   return (
-    <form className="max-w-[1500px] mx-auto bg-white p-6 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+    <form className="max-w-[1500px] mx-auto bg-white p-6  shadow-md grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-3">
         <label className="text-sm font-medium">Nombre</label>
         <input type="text" className="border p-2 rounded" value={nombre} onChange={(e) => setNombre(e.target.value)} />

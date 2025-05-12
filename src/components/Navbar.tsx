@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronUp, ShoppingCart, User, Loader } from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
-interface NavbarProps {
-  onCartClick: () => void;
-}
-
-const Navbar = ({ onCartClick }: NavbarProps) => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const { cantidadTotal } = useCart();
+  const { user } = useAuth(); // 👈 Usa la cantidad del carrito
 
   // Verificar sesión al montar el componente
   useEffect(() => {
@@ -75,18 +75,34 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
-      <nav className="relative bg-gradient-to-b from-black/90 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
+      <nav className="relative bg-gradient-to-b from-black/100 to-transparent p-4 text-white flex justify-between items-center fixed top-0 w-full z-20">
         <Link to="/">
           <h1 className="text-xl font-bold ml-6">Mi centro comercial</h1>
         </Link>
+        <div className="relative flex ">
+          <Link to="/almacenes">
+            <h2 className="text-xl semi-bold ml-6">Almacenes</h2>
+          </Link>
+          <Link
+            to="/nosotros"
+            className="text-xl semi-bold ml-6"
+            >
+            <h2>Nosotros</h2>
+          </Link>
+        </div>
         <div className="flex items-center gap-3">
-          {/* Botón del carrito */}
-          <button
-            onClick={onCartClick}
-            className="p-2 rounded-full hover:bg-black/40 transition-colors"
+          {/* Carrito con contador */}
+          <Link
+            to="/carrito"
+            className="relative p-2 rounded-full hover:bg-black/40 transition-colors"
           >
             <ShoppingCart size={20} />
-          </button>
+            {cantidadTotal > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
+                {cantidadTotal}
+              </span>
+            )}
+          </Link>
 
           {/* Botón de perfil */}
           {isLoading ? (
@@ -121,6 +137,7 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
                 >
                   Dashboard
                 </Link>
+                {user?.role === 'admin' && (
                 <Link
                   to="/products"
                   className="block px-4 py-2 hover:bg-gray-200"
@@ -128,6 +145,7 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
                 >
                   Productos
                 </Link>
+                )}
                 <Link
                   to="/users"
                   className="block px-4 py-2 hover:bg-gray-200"
@@ -135,19 +153,11 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
                 >
                   Usuarios
                 </Link>
-                <Link
-                  to="/nosotros"
-                  className="block px-4 py-2 hover:bg-gray-200"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Nosotros
-                </Link>
               </div>
             )}
           </div>
         </div>
 
-        {/* Degradado inferior extendido */}
         <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-b from-transparent to-black/0 pointer-events-none" />
       </nav>
     </div>
@@ -155,6 +165,8 @@ const Navbar = ({ onCartClick }: NavbarProps) => {
 };
 
 export default Navbar;
+
+
 
 
 

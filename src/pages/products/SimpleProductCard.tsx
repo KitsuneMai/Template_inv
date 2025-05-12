@@ -14,7 +14,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, onClick 
   return (
     <div
       onClick={onClick}
-      className="w-full cursor-pointer"
+      className="w-full cursor-pointer mb-20"
     >
       <div
         className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm 
