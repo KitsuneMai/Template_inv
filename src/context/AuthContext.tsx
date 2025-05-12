@@ -1,31 +1,62 @@
-// src/context/AuthContext.tsx
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type User = {
   id: number;
-  name: string;
-  role: "admin" | "cliente";
+  email: string;
+  roles: string[]; // 👈 este es el que realmente recibes
+  tienda?: {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    imagenPortada: string;
+    imagenLogo: string;
+  };
 };
-
-type AuthContextType = {
+interface AuthContextProps {
   user: User | null;
+  isLoggedIn: boolean;
   setUser: (user: User | null) => void;
-};
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps>({
+  user: null,
+  isLoggedIn: false,
+  setUser: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/carrito/usuario", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          setIsLoggedIn(true);
+        } else {
+          setUser(null);
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        setUser(null);
+        setIsLoggedIn(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

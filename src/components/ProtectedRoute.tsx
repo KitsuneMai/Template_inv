@@ -1,20 +1,21 @@
-// src/components/ProtectedRoute.tsx
+// ProtectedRoute.tsx
 import { Navigate } from "react-router-dom";
 import { ReactNode } from "react";
+import { useAuth } from "../context/AuthContext"; // Asegúrate de importar correctamente
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: string[]; // Por si más adelante quieres más de un rol permitido
+  allowedRoles?: string[];
 }
 
 const ProtectedRoute = ({ children, allowedRoles = [] }: ProtectedRouteProps) => {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const { user, isLoggedIn } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/products" replace />;
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+  if (allowedRoles.length > 0 && !allowedRoles.some(role => user?.roles.includes(role))) {
     return <Navigate to="/" replace />;
   }
 

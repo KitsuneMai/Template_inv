@@ -1,4 +1,4 @@
-import { useState, } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomButton from "../../components/CustomButton";
 
@@ -7,7 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // 👈 Importante
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,9 +28,10 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login exitoso:", data);
+          // Login exitoso:
+        window.location.href = "/"; // fuerza recarga completa, se vuelve a montar todo y se toma la cookie
 
-        // Redirigir al Dashboard
-        setTimeout(() => navigate("/"), 0);
+        setTimeout(() => navigate("/"), 0); // Redirige al dashboard
       } else {
         setErrorMessage(data.message || "Error en el inicio de sesión");
       }
@@ -68,7 +69,7 @@ export default function Login() {
             disabled={loading}
             label={loading ? "Cargando..." : "Login"}
             className="w-full bg-blue-500 hover:bg-blue-600 py-2 rounded transition-colors"
-            size="lg" // Ajusta según necesidad
+            size="lg"
           />
         </form>
         {errorMessage && (

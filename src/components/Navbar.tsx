@@ -1,39 +1,22 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp, ShoppingCart, User, Loader } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { user, isLoggedIn, setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
   const { cantidadTotal } = useCart();
-  const { user } = useAuth(); // 👈 Usa la cantidad del carrito
 
-  // Verificar sesión al montar el componente
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/carrito/usuario', {
-          method: 'GET',
-          credentials: 'include' // Para incluir las cookies
-        });
-        
-        if (response.ok) {
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
-  }, [location]);
+    // Solo cambia isLoading a false cuando hay un usuario o no hay ninguno.
+    if (user !== null || !isLoggedIn) {
+      setIsLoading(false);
+    }
+  }, [user, isLoggedIn]);
 
   const handleLogout = async () => {
     try {
@@ -41,15 +24,15 @@ const Navbar = () => {
         method: 'POST',
         credentials: 'include'
       });
-      setIsLoggedIn(false);
+      setUser(null);
+      setIsLoading(false); // Asegúrate de resetear isLoading al cerrar sesión
       setShowLogoutModal(false);
-      // Opcional: redirigir al home
-      window.location.href = '/';
+      window.location.href = '/login'; // Redirige al login
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
-  
+
   const LogoutModal = () => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-sm w-full">
@@ -79,14 +62,14 @@ const Navbar = () => {
         <Link to="/">
           <h1 className="text-xl font-bold ml-6">Mi centro comercial</h1>
         </Link>
-        <div className="relative flex ">
+        <div className="relative flex">
           <Link to="/almacenes">
             <h2 className="text-xl semi-bold ml-6">Almacenes</h2>
           </Link>
           <Link
             to="/nosotros"
             className="text-xl semi-bold ml-6"
-            >
+          >
             <h2>Nosotros</h2>
           </Link>
         </div>
@@ -109,7 +92,7 @@ const Navbar = () => {
             <Loader className="animate-spin" size={20} />
           ) : (
             <button
-              onClick={() => isLoggedIn 
+              onClick={() => isLoggedIn
                 ? setShowLogoutModal(true)
                 : (window.location.href = '/login')}
               className="p-2 rounded-full hover:bg-black/40 transition-colors"
@@ -137,7 +120,7 @@ const Navbar = () => {
                 >
                   Dashboard
                 </Link>
-                {user?.role === 'admin' && (
+                {user?.roles?.includes('admin') && (
                 <Link
                   to="/products"
                   className="block px-4 py-2 hover:bg-gray-200"
@@ -146,6 +129,7 @@ const Navbar = () => {
                   Productos
                 </Link>
                 )}
+                {user?.roles?.includes('admin') && (
                 <Link
                   to="/users"
                   className="block px-4 py-2 hover:bg-gray-200"
@@ -153,6 +137,7 @@ const Navbar = () => {
                 >
                   Usuarios
                 </Link>
+                )}
               </div>
             )}
           </div>
@@ -165,6 +150,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 
 
